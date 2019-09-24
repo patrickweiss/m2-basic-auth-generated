@@ -9,9 +9,6 @@ const mongoose     = require('mongoose');
 const logger       = require('morgan');
 const path         = require('path');
 
-//b_app
-const session    = require("express-session");
-const MongoStore = require("connect-mongo")(session);
 
 mongoose
   .connect('mongodb://localhost/m2-basic-auth-generated', {useNewUrlParser: true, useUnifiedTopology: true})
@@ -28,15 +25,6 @@ const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.
 const app = express();
 
 // Middleware Setup
-app.use(session({
-  secret: "basic-auth-secret",
-  cookie: { maxAge: 60000 },
-  store: new MongoStore({
-    mongooseConnection: mongoose.connection,
-    ttl: 24 * 60 * 60 // 1 day
-  })
-}));
-
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -63,10 +51,8 @@ app.locals.title = 'Express - Generated with IronGenerator';
 
 
 
-const auth = require('./routes/auth-routes');
-app.use('/', auth);
-app.use('/', require('./routes/site-routes'));
-
+const index = require('./routes/index');
+app.use('/', index);
 
 
 module.exports = app;
